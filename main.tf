@@ -1,35 +1,14 @@
-provider "aws" {
-  region = local.region
-}
-
-locals {
-  name   = "jautrey-cluster"
-  region = "us-west-1"
-
-  vpc_cidr = "10.123.0.0/16"
-  azs      = ["us-west-1a", "us-west-1c"]
-
-  public_subnets  = ["10.123.1.0/24", "10.123.2.0/24"]
-  private_subnets = ["10.123.3.0/24", "10.123.4.0/24"]
-  intra_subnets   = ["10.123.5.0/24", "10.123.6.0/24"]
-
-
-  tags = {
-    Example = local.name
-  }
-}
-
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "~> 4.0"
+  version = "5.0.0"
 
-  name = local.name
-  cidr = local.vpc_cidr
+  name = var.name
+  cidr = var.vpc_cidr
 
-  azs             = local.azs
-  private_subnets = local.private_subnets
-  public_subnets  = local.public_subnets
-  intra_subnets   = local.intra_subnets
+  azs             = var.azs
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
+  intra_subnets   = var.intra_subnets
 
   enable_nat_gateway = true
 
@@ -50,7 +29,7 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.1"
 
-  cluster_name                   = local.name
+  cluster_name                   = var.name
   cluster_endpoint_public_access = true
 
   cluster_addons = {
